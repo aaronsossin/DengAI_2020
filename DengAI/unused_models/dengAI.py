@@ -39,7 +39,7 @@ sj_train_labels = train_labels.loc['sj']
 # Separate data for Iquitos
 iq_train_features = train_features.loc['iq']
 iq_train_labels = train_labels.loc['iq']
-
+"""
 print('San Juan')
 print('features: ', sj_train_features.shape)
 print('labels  : ', sj_train_labels.shape)
@@ -47,6 +47,8 @@ print('labels  : ', sj_train_labels.shape)
 print('\nIquitos')
 print('features: ', iq_train_features.shape)
 print('labels  : ', iq_train_labels.shape)
+"""
+
 
 # Remove `week_start_date` string.
 sj_train_features.drop('week_start_date', axis=1, inplace=True)
@@ -65,6 +67,7 @@ plt.xlabel('Time')
 sj_train_features.fillna(method='ffill', inplace=True)
 iq_train_features.fillna(method='ffill', inplace=True)
 
+"""
 print('San Juan')
 print('mean: ', sj_train_labels.mean()[0])
 print('var :', sj_train_labels.var()[0])
@@ -72,6 +75,7 @@ print('var :', sj_train_labels.var()[0])
 print('\nIquitos')
 print('mean: ', iq_train_labels.mean()[0])
 print('var :', iq_train_labels.var()[0])
+"""
 
 sj_train_labels.hist()
 
@@ -85,12 +89,12 @@ sj_correlations = sj_train_features.corr()
 iq_correlations = iq_train_features.corr()
 
 # plot san juan
-sj_corr_heat = sns.heatmap(sj_correlations)
-plt.title('San Juan Variable Correlations')
+#sj_corr_heat = sns.heatmap(sj_correlations)
+#plt.title('San Juan Variable Correlations')
 
 # plot iquitos
-iq_corr_heat = sns.heatmap(iq_correlations)
-plt.title('Iquitos Variable Correlations')
+#iq_corr_heat = sns.heatmap(iq_correlations)
+#plt.title('Iquitos Variable Correlations')
 
 # San Juan
 (sj_correlations
@@ -140,7 +144,8 @@ def preprocess_data_all_features(data_path, labels_path=None):
     df = pd.read_csv(data_path, index_col=[0, 1, 2])
     print(df.shape)
     # select features we want
-    features = ['ndvi_ne', 'ndvi_nw', 'ndvi_se', 'ndvi_sw', 'precipitation_amt_mm', 'reanalysis_air_temp_k',
+    features = ['ndvi_ne', 'ndvi_nw', 'ndvi_se', 'ndvi_sw', 'precipitation_amt_mm',
+                'reanalysis_air_temp_k',
                 'reanalysis_avg_temp_k', 'reanalysis_dew_point_temp_k', 'reanalysis_max_air_temp_k',
                 'reanalysis_min_air_temp_k', 'reanalysis_precip_amt_kg_per_m2', 'reanalysis_relative_humidity_percent',
                 'reanalysis_sat_precip_amt_mm', 'reanalysis_specific_humidity_g_per_kg', 'reanalysis_tdtr_k',
@@ -163,87 +168,186 @@ def preprocess_data_all_features(data_path, labels_path=None):
     return sj, iq
 
 
-sj_train, iq_train = preprocess_data_all_features('dengue_features_train.csv',
-                                                  labels_path="dengue_labels_train.csv")
-
-sj_test, iq_test = preprocess_data_all_features('dengue_features_test.csv')
-
 # ---------------------------------MANUAL NEURAL NETWORK------------------------
-from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import KFold
 
-X = torch.FloatTensor(sj_train.values)
-X_test = torch.FloatTensor(sj_test.values)
-y = X[:, -1]
-X = X[:, :-1]
+sj_train, iq_train = preprocess_data_all_features('dengue_features_train.csv', labels_path='dengue_labels_train.csv')
+
+X_sj = torch.FloatTensor(sj_train.values)
+y_sj = X_sj[:, -1]
+X_sj = X_sj[:, :-1]
+X_iq = torch.FloatTensor(iq_train.values)
+y_iq = X_iq[:, -1]
+X_iq = X_iq[:, :-1]
 
 
 def scale1Darray(x):
     minimum = min(x)
     maximum = max(x)
     for a in x:
-        a = (a - minimum) / (maximum- minimum)
+        a = (a - minimum) / (maximum - minimum)
 
-#Scale columns
-for column in X.T:
+
+# Scale columns
+for column in X_sj.T:
+    scale1Darray(column)
+for column in X_iq.T:
     scale1Darray(column)
 
-print(X)
+def train_manual_neural(m, criterion, optimizer, X, y, lr):
+    epochs = 1000
 
-
-def train_manual_neural(m, criterion, optimizer, X, y):
-    epochs = 5000
     for epoch in range(epochs):
-        m.train()
-        optimizer.zero_grad()
+
         # Forward pass
-        y_pred = model(X)
+        y_pred = m(X)
 
         # Compute Loss
         loss = criterion(y_pred, y)
 
+        m.zero_grad()
+
+        #optimizer.zero_grad()
         # print('Epoch {}: train loss: {}'.format(epoch, loss.item()))
         # Backward pass
         loss.backward()
-        optimizer.step()
+        with torch.no_grad():
+            for param in m.parameters():
+                param -= lr * param.grad
 
 
 def eval_manual_neural(m, criterion, X, y):
     y_pred = m(X)
     after_train = criterion(y_pred, y)
-    print('Test loss ', after_train.item())
+    print('Evaluation Test loss ', after_train.item())
     return after_train.item()
 
 
-def cross_val(m, criterion, optimizer, X, y, k=8):
+def cross_val(m, criterion, optimizer, X, y, lr, k=8):
     kf = KFold(n_splits=k)
     scores = []
     for train_index, test_index in kf.split(X):
-        m = feed_forward(X.shape[1], 2)
+        print("Cross_VAL")
+        #m = feed_forward(X.shape[1], 2)
+        #model = TwoLayerNet(X_sj.shape[1], 2, 1)
+        m = Feedforward(X_iq.shape[1], 10)  # TwoLayerNet(X_iq.shape[1], 10, 1)
         X_train, X_test = X[train_index], X[test_index]
         y_train, y_test = y[train_index], y[test_index]
-        train_manual_neural(m, criterion, optimizer, X_train, y_train)
+        train_manual_neural(m, criterion, optimizer, X_train, y_train,lr)
         score = eval_manual_neural(m, criterion, X_test, y_test)
         scores.append(score)
 
     return sum(scores) / len(scores)
 
+def cross_val(m, criterion, optimizer, X, y, lr, hu, k=8):
+    kf = KFold(n_splits=k)
+    scores = []
+    for train_index, test_index in kf.split(X):
+        print("Cross_VAL")
+        #m = feed_forward(X.shape[1], 2)
+        #model = TwoLayerNet(X_sj.shape[1], 2, 1)
+        m = Feedforward(X_iq.shape[1], hu)  # TwoLayerNet(X_iq.shape[1], 10, 1)
+        X_train, X_test = X[train_index], X[test_index]
+        y_train, y_test = y[train_index], y[test_index]
+        train_manual_neural(m, criterion, optimizer, X_train, y_train,lr)
+        score = eval_manual_neural(m, criterion, X_test, y_test)
+        scores.append(score)
+    return sum(scores) / len(scores)
 
+from SequenceNet import Sequence
+from TwoLayerNet import TwoLayerNet
+from FFN import Feedforward
 # ---------------Initializing Model-------------
-model = feed_forward(X.shape[1], 2)
-
-# model = r_neural_net(X.shape[1], 1, 2, 2)
+#model = feed_forward(X_sj.shape[1], 2)
+#model = r_neural_net(X.shape[1], 1, 2, 2)
+#criterion = torch.nn.L1Loss()
 criterion = torch.nn.L1Loss()
-optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
 
-eval_manual_neural(model, criterion, X, y)
-print("Average score manual neural: ", cross_val(model, criterion, optimizer, X, y))
+model_sj = TwoLayerNet(X_sj.shape[1], 1, 1)
+optimizer = torch.optim.SGD(model_sj.parameters(), lr=0.000000001)
+train_manual_neural(model_sj, criterion, optimizer, X_sj, y_sj,0.005)
+
+model_iq = Feedforward(X_iq.shape[1], 1)#TwoLayerNet(X_iq.shape[1], 10, 1)
+old_params = {}
+for name, params in model_iq.named_parameters():
+    old_params[name] = params.clone()
+#print(model_iq.state_dict())
+train_manual_neural(model_iq, criterion, optimizer, X_iq, y_iq,0.05)
+#print(model_iq.state_dict())
+for name, params in model_iq.named_parameters():
+    if (old_params[name] == params).all():
+        print("True")
+
+"""
+scores = []
+hu = []
+lr = []
+for c in range(0,5):
+    for d in range(0,5):
+        scores.append(cross_val(model_iq, criterion, optimizer, X_iq, y_iq, 0.1 ** c,4 ** d , 4))
+        hu.append(4 ** d)
+        lr.append(0.1 ** c)
+
+print((scores, hu, lr))
+"""
+
+from keras.layers import Dense, Activation
+from keras.models import Sequential
+# Initialising the ANN
+modelSJ = Sequential()
+
+# Adding the input layer and the first hidden layer
+modelSJ.add(Dense(32, activation = 'relu', input_dim = 20))
+
+# Adding the second hidden layer
+modelSJ.add(Dense(units = 32, activation = 'relu'))
+
+# Adding the third hidden layer
+modelSJ.add(Dense(units = 32, activation = 'relu'))
+
+# Adding the output layer
+
+modelSJ.add(Dense(units = 1))
+
+#model.add(Dense(1))
+# Compiling the ANN
+modelSJ.compile(optimizer = 'SGD', loss = 'mean_absolute_error')
+
+# Fitting the ANN to the Training set
+modelSJ.fit(sj_train.iloc[:,:-1], sj_train.iloc[:,-1], batch_size = 10, epochs = 100)
+
+# Initialising the ANN
+modelIQ = Sequential()
+
+# Adding the input layer and the first hidden layer
+modelIQ.add(Dense(32, activation = 'relu', input_dim = 20))
+
+# Adding the second hidden layer
+modelIQ.add(Dense(units = 32, activation = 'relu'))
+
+# Adding the third hidden layer
+modelIQ.add(Dense(units = 32, activation = 'relu'))
+
+# Adding the output layer
+
+modelIQ.add(Dense(units = 1))
+
+#model.add(Dense(1))
+# Compiling the ANN
+modelIQ.compile(optimizer = 'adam', loss = 'mean_squared_error')
+
+# Fitting the ANN to the Training set
+modelIQ.fit(sj_train.iloc[:,:-1], sj_train.iloc[:,-1], batch_size = 10, epochs = 200)
 
 
-# train_manual_neural(model, criterion, optimizer, X, y)
+sj_test, iq_test = preprocess_data_all_features('dengue_features_test.csv')
 
-# eval_manual_neural(model, criterion, X, y)
+y_pred_iq = modelIQ.predict(iq_test).astype('int')
+y_pred_sj = modelSJ.predict(sj_test).astype('int')
 
+
+
+# -----------------------------------SKLEARN------------------------------
 def param_search(m, X, y, cross_val=2):
     best_score = -1000
     best_alpha = 0
@@ -267,134 +371,73 @@ def param_search(m, X, y, cross_val=2):
     return (best_score, best_alpha, best_hl, best_maxiter)
 
 
+sj_train, iq_train = preprocess_data_all_features('dengue_features_train.csv', labels_path='dengue_labels_train.csv')
+
 # PARAMETER TUNING
 # params = param_search(8, sj_train.iloc[:,:-1], sj_train.iloc[:,-1])
 # print(params)
 
 # San Juan
-print("SAN JUAN")
 print("-----MULTILAYER PERCEPTRON------- ")
-model_sj = sk_models(8, 10, 1e-05, 2)
+model_sj_sklearn = sk_models(8, 10, 1e-05, 2)
 # predictions = model.generate_predictions(sj_train.iloc[:,:-1], sj_train.iloc[:,-1], sj_train.iloc[:,:-1])
-score = model_sj.cross_validate(sj_train.iloc[:, :-1], sj_train.iloc[:, -1])
-print(score)
+#score = model_sj_sklearn.cross_validate(sj_train.iloc[:, :-1], sj_train.iloc[:, -1])
+#print(score)
 
 # Iquitos
 print("IQUITOS")
 print("-----MULTILAYER PERCEPTRON------- ")
-model_iq = sk_models(8, 10, 1e-05, 2)
-score = model_iq.cross_validate(iq_train.iloc[:, :-1], iq_train.iloc[:, -1])
-print(score)
-
-# print(score)
-""" 
-model = sk_models(1,10)
-predictions = model.generate_predictions(sj_train.iloc[:800,:-1], sj_train.iloc[:800,-1], sj_train.iloc[:,:-1])
-#print(predictions)
-score = model.cross_validate(sj_train.iloc[:,:-1], sj_train.iloc[:,-1])
+model_iq_sklearn = sk_models(8, 10, 1e-05, 2)
+#score = model_iq_sklearn.cross_validate(iq_train.iloc[:, :-1], iq_train.iloc[:, -1])
 #print(score)
 
 
+# Go through all SKLEARN models
+def sklearn_models():
+    for x in range(9):
+        predictions_sj = []
+        predictions_iq = []
+        if (x != 6):
+            print("X ", x)
+            model = sk_models(x, 4)
+            sj_test, iq_test = preprocess_data_all_features('dengue_features_test.csv')
 
+            prediction_sj = model.generate_predictions(sj_train.iloc[:, :-1], sj_train.iloc[:, -1],
+                                                       sj_test)
+            prediction_iq = model.generate_predictions(iq_train.iloc[:, :-1], iq_train.iloc[:, -1],
+                                                       iq_test)
+            print("SJ")
+            model.cross_validate(sj_train.iloc[:, :-1], sj_train.iloc[:, -1])
+            print("IQ")
+            model.cross_validate(iq_train.iloc[:, :-1], iq_train.iloc[:, -1])
+            predictions_sj.append(prediction_sj)
+            predictions_iq.append(prediction_iq)
 
-fig10, ax10 = plt.subplots()
-ax10.plot(predictions)
-ax10.plot(y)
-ax10.set_title("Axis 1 title")
-ax10.set_xlabel("X-label for axis 1")
-plt.show()
-"""
-for x in range(9):
-    predictions_sj = []
-    predictions_iq = []
-    if (x != 6):
-        print("X ", x)
-        model = sk_models(x, 4)
-        sj_test, iq_test = preprocess_data_all_features('dengue_features_test.csv')
-
-        prediction_sj = model.generate_predictions(sj_train.iloc[:, :-1], sj_train.iloc[:, -1],
-                                                   sj_test)
-        prediction_iq = model.generate_predictions(iq_train.iloc[:, :-1], iq_train.iloc[:, -1],
-                                                   iq_test)
-        print("SJ")
-        model.cross_validate(sj_train.iloc[:, :-1], sj_train.iloc[:, -1])
-        print("IQ")
-        model.cross_validate(iq_train.iloc[:, :-1], iq_train.iloc[:, -1])
-        predictions_sj.append(prediction_sj)
-        predictions_iq.append(prediction_iq)
-
-""""
-def get_best_model(train, test):
-    # Step 1: specify the form of the model
-    model_formula = "total_cases ~ 1 + " \
-                    "reanalysis_specific_humidity_g_per_kg + " \
-                    "reanalysis_dew_point_temp_k + " \
-                    "station_min_temp_c + " \
-                    "station_avg_temp_c"
-
-    grid = 10 ** np.arange(-8, -3, dtype=np.float64)
-
-    best_alpha = []
-    best_score = 1000
-
-    # Step 2: Find the best hyper parameter, alpha
-    for alpha in grid:
-        model = smf.glm(formula=model_formula,
-                        data=train,
-                        family=sm.families.NegativeBinomial(alpha=alpha))
-
-        results = model.fit()
-        predictions = results.predict(test).astype(int)
-        score = eval_measures.meanabs(predictions, test.total_cases)
-        score = eval_measures.mse(predictions, test.total_cases)
-
-        if score < best_score:
-            best_alpha = alpha
-            best_score = score
-
-    print('best alpha = ', best_alpha)
-    print('best score = ', best_score)
-
-    # Step 3: refit on entire dataset
-    full_dataset = pd.concat([train, test])
-    model = smf.glm(formula=model_formula,
-                    data=full_dataset,
-                    family=sm.families.NegativeBinomial(alpha=best_alpha))
-
-    fitted_model = model.fit()
-    return fitted_model
-
-
-sj_best_model = get_best_model(sj_train_subtrain, sj_train_subtest)
-iq_best_model = get_best_model(iq_train_subtrain, iq_train_subtest)
-
-figs, axes = plt.subplots(nrows=2, ncols=1)
-
-# plot sj
-sj_train['fitted'] = sj_best_model.fittedvalues
-sj_train.fitted.plot(ax=axes[0], label="Predictions")
-sj_train.total_cases.plot(ax=axes[0], label="Actual")
-
-# plot iq
-iq_train['fitted'] = iq_best_model.fittedvalues
-iq_train.fitted.plot(ax=axes[1], label="Predictions")
-iq_train.total_cases.plot(ax=axes[1], label="Actual")
-
-plt.suptitle("Dengue Predicted Cases vs. Actual Cases")
-plt.legend()
-"""
 sj_test, iq_test = preprocess_data_all_features('dengue_features_test.csv')
-
-# sj_predictions = sj_best_model.predict(sj_test).astype(int)
-# iq_predictions = iq_best_model.predict(iq_test).astype(int)
+"""
 model_sj = sk_models(7, 8)
 model_iq = sk_models(7, 8)
 sj_pred = model_sj.generate_predictions(sj_train.iloc[:, :-1], sj_train.iloc[:, -1], sj_test)
 iq_pred = model_iq.generate_predictions(iq_train.iloc[:, :-1], iq_train.iloc[:, -1], iq_test)
+"""
+
+sj_test_tensor = torch.FloatTensor(sj_test.values)
+iq_test_tensor = torch.FloatTensor(iq_test.values)
+
+# Scale columns
+for column in sj_test_tensor.T:
+    scale1Darray(column)
+for column in iq_test_tensor.T:
+    scale1Darray(column)
+
+sj_pred = model_sj(sj_test_tensor)
+iq_pred = model_iq(iq_test_tensor)
 
 submission = pd.read_csv("submission_format.csv",
                          index_col=[0, 1, 2])
 
-submission.total_cases = np.concatenate([sj_pred, iq_pred])
+#submission.total_cases = np.concatenate([sj_pred.data.numpy(), iq_pred.data.numpy()])
+submission.total_cases = np.concatenate([y_pred_sj, y_pred_iq])
 submission.to_csv("benchmark.csv")
-plt.show()
+#plt.show()
+
