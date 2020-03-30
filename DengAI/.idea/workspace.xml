@@ -3,9 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="96a60eef-ca63-40b4-956b-bdccc332627d" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/benchmark.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/dengAI2.py" beforeDir="false" afterPath="$PROJECT_DIR$/dengAI2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/submission.csv" beforeDir="false" afterPath="$PROJECT_DIR$/submission.csv" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -97,7 +95,8 @@
       <workItem from="1585324007497" duration="1459000" />
       <workItem from="1585325884696" duration="30468000" />
       <workItem from="1585489021957" duration="5408000" />
-      <workItem from="1585533364601" duration="65000" />
+      <workItem from="1585533364601" duration="1587000" />
+      <workItem from="1585574158356" duration="607000" />
     </task>
     <servers />
   </component>
@@ -109,7 +108,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>

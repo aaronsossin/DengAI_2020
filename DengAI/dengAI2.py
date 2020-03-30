@@ -11,7 +11,7 @@ from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.ensemble import VotingClassifier
 import pandas as pd
 import numpy as np
-
+from sklearn.ensemble import RandomForestRegressor
 from matplotlib import pyplot as plt
 import seaborn as sns
 
@@ -41,8 +41,8 @@ iq_train_features = train_features.loc['iq']
 iq_train_labels = train_labels.loc['iq']
 
 # Remove `week_start_date` string.
-#sj_train_features.drop('week_start_date', axis=1, inplace=True)
-#iq_train_features.drop('week_start_date', axis=1, inplace=True)
+# sj_train_features.drop('week_start_date', axis=1, inplace=True)
+# iq_train_features.drop('week_start_date', axis=1, inplace=True)
 
 pd.isnull(sj_train_features).any()
 
@@ -86,7 +86,8 @@ def preprocess_data_all_features(data_path, labels_path=None):
 
     return sj, iq
 
-#Scaling input data
+
+# Scaling input data
 def scale1Darray(x):
     minimum = min(x)
     maximum = max(x)
@@ -99,7 +100,8 @@ sj_train, iq_train = preprocess_data_all_features('dengue_features_train.csv', l
 from keras.layers import Dense, Activation
 from keras.models import Sequential
 
-#Sequential 4 layer neural network
+
+# Sequential 4 layer neural network
 def returnSequential4():
     model = Sequential()
 
@@ -111,7 +113,8 @@ def returnSequential4():
 
     return model
 
-#Sequential 6 layer neural network
+
+# Sequential 6 layer neural network
 def returnSequential6():
     model = Sequential()
     model.add(Dense(50, input_dim=20, activation='relu'))
@@ -123,6 +126,7 @@ def returnSequential6():
 
     model.compile(optimizer='Adam', loss='mean_absolute_error')
     return model
+
 
 def mlp_model():
     model = Sequential()
@@ -140,6 +144,7 @@ def mlp_model():
     model.compile(optimizer='Adam', loss='mean_absolute_error')
     return model
 
+
 def ensemble_nn():
     model1 = KerasClassifier(build_fn=mlp_model, epochs=100, verbose=0)
     model2 = KerasClassifier(build_fn=mlp_model, epochs=100, verbose=0)
@@ -148,6 +153,11 @@ def ensemble_nn():
     ensemble_clf = VotingClassifier(estimators=[('model1', model1), ('model2', model2), ('model3', model3)],
                                     voting='soft')
     return ensemble_clf
+
+
+def returnRandomForest(n_est=100):
+    return RandomForestRegressor(n_estimators=n_est, criterion='mean_absolute_error', random_state=0)
+
 
 def cross_val(bs, ep, X, y, k=3):
     print("CROSS VAL")
@@ -179,17 +189,18 @@ def returnOptimizedModel(X, y):
     print("MIN SCORE: ", min(scores), " \n")
     index = scores.index(min(scores))
     print("Batch: ", aa[index], " epochs: ", bb[index])
-    model = ensemble_nn()
+    model = returnSequential6()
     model.fit(X, y, batch_size=aa[index], epochs=bb[index], verbose=0)
     return model
 
 
-X_sj = sj_train.iloc[:,:-1]
-y_sj = sj_train.iloc[:,-1]
-X_iq = iq_train.iloc[:,:-1]
-y_iq = iq_train.iloc[:,-1]
+X_sj = sj_train.iloc[:, :-1]
+y_sj = sj_train.iloc[:, -1]
+X_iq = iq_train.iloc[:, :-1]
+y_iq = iq_train.iloc[:, -1]
 
 from sklearn.preprocessing import scale
+
 X_sj = scale(X_sj, axis=1, with_mean=True, with_std=True)
 X_iq = scale(X_iq, axis=1, with_mean=True, with_std=True)
 
@@ -203,8 +214,9 @@ model_iq.fit(X_iq, y_iq)
 sj_test, iq_test = preprocess_data_all_features('dengue_features_test.csv')
 
 from sklearn.preprocessing import scale
-sj_test = scale(sj_test.iloc[:,:], axis=1, with_mean=True, with_std=True)
-iq_test = scale(iq_test.iloc[:,:], axis=1, with_mean=True, with_std=True)
+
+sj_test = scale(sj_test.iloc[:, :], axis=1, with_mean=True, with_std=True)
+iq_test = scale(iq_test.iloc[:, :], axis=1, with_mean=True, with_std=True)
 
 y_pred_sj = model_sj.predict(sj_test).astype('int')
 y_pred_iq = model_iq.predict(iq_test).astype('int')
@@ -213,6 +225,7 @@ submission = pd.read_csv("submission_format.csv",
 
 submission.total_cases = np.concatenate([y_pred_sj, y_pred_iq])
 submission.to_csv("submission.csv")
+
 
 # Go through all SKLEARN models
 def sklearn_models():
@@ -235,5 +248,4 @@ def sklearn_models():
             predictions_sj.append(prediction_sj)
             predictions_iq.append(prediction_iq)
 
-
-#With shuffling, both net6 and net4 hover around 30 MAE testing.
+# With shuffling, both net6 and net4 hover around 30 MAE testing.
