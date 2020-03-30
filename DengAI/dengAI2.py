@@ -7,7 +7,8 @@ from __future__ import division
 import torch
 from feed_forward import feed_forward
 
-
+from keras.wrappers.scikit_learn import KerasClassifier
+from sklearn.ensemble import VotingClassifier
 import pandas as pd
 import numpy as np
 
@@ -123,6 +124,31 @@ def returnSequential6():
     model.compile(optimizer='Adam', loss='mean_absolute_error')
     return model
 
+def mlp_model():
+    model = Sequential()
+
+    model.add(Dense(50, input_dim=20))
+    model.add(Activation('sigmoid'))
+    model.add(Dense(50))
+    model.add(Activation('sigmoid'))
+    model.add(Dense(50))
+    model.add(Activation('sigmoid'))
+    model.add(Dense(50))
+    model.add(Activation('sigmoid'))
+    model.add(Dense(1))
+    model.add(Activation('softmax'))
+    model.compile(optimizer='Adam', loss='mean_absolute_error')
+    return model
+
+def ensemble_nn():
+    model1 = KerasClassifier(build_fn=mlp_model, epochs=100, verbose=0)
+    model2 = KerasClassifier(build_fn=mlp_model, epochs=100, verbose=0)
+    model3 = KerasClassifier(build_fn=mlp_model, epochs=100, verbose=0)
+
+    ensemble_clf = VotingClassifier(estimators=[('model1', model1), ('model2', model2), ('model3', model3)],
+                                    voting='soft')
+    return ensemble_clf
+
 def cross_val(bs, ep, X, y, k=3):
     print("CROSS VAL")
     kf = KFold(n_splits=k, shuffle=True, random_state=0)
@@ -132,7 +158,7 @@ def cross_val(bs, ep, X, y, k=3):
         X_train, X_test = X[train_index], X[test_index]
         y_train, y_test = y[train_index], y[test_index]
         m.fit(X_train, y_train, batch_size=bs, epochs=ep, verbose=0)
-        score = m.evaluate(X_test, y_test)
+        score = m.evaluate(X_test, y_test, verbose=0)
         scores.append(score)
 
     return sum(scores) / len(scores)
@@ -144,7 +170,7 @@ def returnOptimizedModel(X, y):
     scores = []
     aa = []
     bb = []
-    for a in range(10, 100, 40):
+    for a in range(10, 100, 20):
         for b in range(100, 501, 200):
             scores.append(cross_val(a, b, X, y))
             aa.append(a)
@@ -153,7 +179,7 @@ def returnOptimizedModel(X, y):
     print("MIN SCORE: ", min(scores), " \n")
     index = scores.index(min(scores))
     print("Batch: ", aa[index], " epochs: ", bb[index])
-    model = returnSequential6()
+    model = ensemble_nn()
     model.fit(X, y, batch_size=aa[index], epochs=bb[index], verbose=0)
     return model
 
@@ -167,11 +193,11 @@ from sklearn.preprocessing import scale
 X_sj = scale(X_sj, axis=1, with_mean=True, with_std=True)
 X_iq = scale(X_iq, axis=1, with_mean=True, with_std=True)
 
-print(X_sj)
-
-print("SCORE ", cross_val(10, 100, X_sj, y_sj, 8))
 model_sj = returnOptimizedModel(X_sj, y_sj)
 model_iq = returnOptimizedModel(X_iq, y_iq)
+
+model_sj.fit(X_sj, y_sj)
+model_iq.fit(X_iq, y_iq)
 
 # SUBMISSION
 sj_test, iq_test = preprocess_data_all_features('dengue_features_test.csv')
@@ -208,3 +234,6 @@ def sklearn_models():
             model.cross_validate(iq_train.iloc[:, :-1], iq_train.iloc[:, -1])
             predictions_sj.append(prediction_sj)
             predictions_iq.append(prediction_iq)
+
+
+#With shuffling, both net6 and net4 hover around 30 MAE testing.
