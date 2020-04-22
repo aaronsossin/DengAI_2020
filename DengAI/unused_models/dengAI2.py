@@ -5,7 +5,6 @@
 from __future__ import print_function
 from __future__ import division
 import torch
-from feed_forward import feed_forward
 from sklearn.preprocessing import scale
 from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.ensemble import VotingClassifier
@@ -15,10 +14,6 @@ from sklearn.ensemble import RandomForestRegressor
 from matplotlib import pyplot as plt
 
 from statistics import stdev, mean
-import seaborn as sns
-
-from sklearn.model_selection import train_test_split
-import statsmodels.api as sm
 
 # just for the sake of this blog post!
 from warnings import filterwarnings
@@ -100,7 +95,7 @@ def scale1Darray(x):
 def convertToEpidemic(y):
     m = mean(y)
     std = stdev(y)
-    threshold = m + 2.0 * std
+    threshold = m + 1.0 * std
     newY = [1 if x > threshold else 0 for x in y]
     return np.array(newY)
 
@@ -139,6 +134,19 @@ def returnSequential4():
     model.compile(optimizer='Adam', loss='mean_absolute_error')
 
     return model
+
+
+def base():
+    # 441 Trainable Parameters
+    model = Sequential()
+    model.add(Dense(20, input_dim=20, activation='relu'))
+    model.add(Dense(1, activation='linear'))
+    model.compile(loss='mean_absolute_error', optimizer='Adam')
+    return model
+
+
+m = base()
+m.summary()
 
 
 # Sequential 6 layer neural network
@@ -243,6 +251,7 @@ def cross_val_recurrent(bs, ep, X, y, k=3):
 
     return sum(scores) / len(scores)
 
+
 def cross_val(bs, ep, X, y, k=5):
     print("CROSS VAL")
     kf = KFold(n_splits=k, shuffle=True, random_state=0)
@@ -253,28 +262,32 @@ def cross_val(bs, ep, X, y, k=5):
         y_train, y_test = y[train_index], y[test_index]
         m.fit(X_train, y_train, batch_size=bs, epochs=ep, verbose=0)
         # m.fit(X_train, y_train)
-        a,score = m.evaluate(X_test, y_test, verbose=0)
+        a, score = m.evaluate(X_test, y_test, verbose=0)
         scores.append(score)
 
     return sum(scores) / len(scores)
+
+
 import keras.backend as K
-def get_f1(y_true, y_pred): #taken from old keras source code
+
+
+def get_f1(y_true, y_pred):  # taken from old keras source code
     true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
     possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
     predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
     precision = true_positives / (predicted_positives + K.epsilon())
     recall = true_positives / (possible_positives + K.epsilon())
-    f1_val = 2*(precision*recall)/(precision+recall+K.epsilon())
+    f1_val = 2 * (precision * recall) / (precision + recall + K.epsilon())
     return f1_val
 
-from keras.metrics import Precision, TruePositives
+
 def baseline():
-    # create model
+    # Create model
     model = Sequential()
     model.add(Dense(20, input_dim=20, activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
     # Compile model
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=[TruePositives()])
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     return model
 
 
@@ -298,6 +311,7 @@ def returnOptimizedModel(X, y):
     model.fit(X, y, batch_size=aa[index], epochs=bb[index], verbose=0)
     # model.fit(X, y)
     return model
+
 
 def returnOptimizedModel_binary(X, y):
     # SJ Optimization
@@ -345,8 +359,10 @@ y_iq = iq_train.iloc[:, -1]
 X_sj = scale(X_sj, axis=1, with_mean=True, with_std=True)
 X_iq = scale(X_iq, axis=1, with_mean=True, with_std=True)
 
+IQBEFORE = y_iq.copy()
 y_sj = convertToEpidemic(y_sj)
 y_iq = convertToEpidemic(y_iq)
+
 """
 values = (y_sj.tolist()).copy()
 values.sort()
@@ -360,38 +376,41 @@ X_iq = np.hstack((X_iq, iqadded))
 """
 
 from sklearn.preprocessing import PolynomialFeatures
-
+from pygam import LinearGAM
 poly = PolynomialFeatures(interaction_only=True, include_bias=False)
 # X_sj = poly.fit_transform(X_sj)
 # X_iq = poly.fit_transform(X_iq)
 
-#model_sj = returnOptimizedModel_binary(X_sj, y_sj)
-#odel_iq = returnOptimizedModel_binary(X_iq, y_iq)
+# model_sj = returnOptimizedModel_binary(X_sj, y_sj)
+# odel_iq = returnOptimizedModel_binary(X_iq, y_iq)
+#model_sj = baseline()
+# model_sj.fit(X_sj, y_sj, epochs=5000, batch_size=10, verbose=0)
+#print(model_sj.evaluate(X_sj, y_sj))
+#model_iq = baseline()
+#model_iq.fit(X_iq, y_iq, epochs=5000, batch_size=10, verbose=0)
+# X_sj = np.reshape(X_sj, (X_sj.shape[0], 1, X_sj.shape[1]))
+# X_iq = np.reshape(X_iq, (X_iq.shape[0], 1, X_iq.shape[1]))
 model_sj = baseline()
-model_sj.fit(X_sj, y_sj, epochs=5000, verbose=0)
-print(model_sj.evaluate(X_sj,y_sj))
-model_iq = baseline()
-model_iq.fit(X_iq, y_iq, epochs=1000, verbose=0)
-#X_sj = np.reshape(X_sj, (X_sj.shape[0], 1, X_sj.shape[1]))
-#X_iq = np.reshape(X_iq, (X_iq.shape[0], 1, X_iq.shape[1]))
-
+model_iq = LinearGAM().fit(X_iq, y_iq)
+print(model_iq.predict(X_iq))
 fig1, ax1 = plt.subplots()
 
 sj_pred = model_sj.predict(X_sj)
-sj_pre = np.array([1 if x >= 0.5 else 0 for x in sj_pred])
+sj_pre = np.array([1 if x >= 0.4 else 0 for x in sj_pred])
 print(sum(sj_pre))
+
 iq_pred = model_iq.predict(X_iq)
-iq_pre = np.array([1 if x >= 0.5 else 0 for x in iq_pred])
+iq_pre = np.array([1 if x >= 0.30 else 0 for x in iq_pred])
 print(sum(iq_pre))
 
-
+fig1, ax1 = plt.subplots()
 # plot sj
-plt.plot(range(len(y_sj)), sj_pre)
-plt.plot(range(len(y_sj)), y_sj)
+# plt.plot(range(len(y_sj)), sj_pre)
+# plt.plot(range(len(y_sj)), y_sj)
 
 fig2, ax2 = plt.subplots()
 plt.plot(range(len(y_iq)), iq_pre)
-plt.plot(range(len(y_iq)), y_iq)
+plt.plot(range(len(y_iq)), y_iq, alpha=0.8)
 plt.show()
 # SUBMISSION
 sj_test, iq_test = preprocess_data_all_features('dengue_features_test.csv')
@@ -399,8 +418,8 @@ sj_test, iq_test = preprocess_data_all_features('dengue_features_test.csv')
 sj_test = scale(sj_test.iloc[:, :], axis=1, with_mean=True, with_std=True)
 iq_test = scale(iq_test.iloc[:, :], axis=1, with_mean=True, with_std=True)
 
-#sj_test = np.reshape(sj_test, (sj_test.shape[0], 1, sj_test.shape[1]))
-#iq_test = np.reshape(iq_test, (iq_test.shape[0], 1, iq_test.shape[1]))
+# sj_test = np.reshape(sj_test, (sj_test.shape[0], 1, sj_test.shape[1]))
+# iq_test = np.reshape(iq_test, (iq_test.shape[0], 1, iq_test.shape[1]))
 
 poly = PolynomialFeatures(interaction_only=True, include_bias=False)
 # sj_test = poly.fit_transform(sj_test)
@@ -408,7 +427,6 @@ poly = PolynomialFeatures(interaction_only=True, include_bias=False)
 
 y_pred_sj = model_sj.predict(sj_test).astype('int')
 y_pred_iq = model_iq.predict(iq_test).astype('int')
-
 
 submission = pd.read_csv("submission_format.csv",
                          index_col=[0, 1, 2])

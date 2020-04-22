@@ -2,9 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="96a60eef-ca63-40b4-956b-bdccc332627d" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/DeepModels.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DengAI3.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Epidemic.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Preprocess.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bottle.py" beforeDir="false" afterPath="$PROJECT_DIR$/unused_models/Bottle.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TwoLayerNet.py" beforeDir="false" afterPath="$PROJECT_DIR$/unused_models/TwoLayerNet.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dengAI2.py" beforeDir="false" afterPath="$PROJECT_DIR$/dengAI2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/submission.csv" beforeDir="false" afterPath="$PROJECT_DIR$/submission.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/feed_forward.py" beforeDir="false" afterPath="$PROJECT_DIR$/unused_models/feed_forward.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/unused_models/dengAI.py" beforeDir="false" afterPath="$PROJECT_DIR$/unused_models/dengAI.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -31,6 +38,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/unused_models" />
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
@@ -101,6 +109,11 @@
       <workItem from="1586017111564" duration="19494000" />
       <workItem from="1586219336267" duration="887000" />
       <workItem from="1586271911813" duration="8502000" />
+      <workItem from="1586361973154" duration="599000" />
+      <workItem from="1586437262326" duration="4588000" />
+      <workItem from="1586804491691" duration="994000" />
+      <workItem from="1587487867050" duration="531000" />
+      <workItem from="1587501154928" duration="13881000" />
     </task>
     <servers />
   </component>
@@ -119,6 +132,17 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/DengAI3.py</url>
+          <line>20</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/untitled2$dengAI.coverage" NAME="dengAI Coverage Results" MODIFIED="1583614067892" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

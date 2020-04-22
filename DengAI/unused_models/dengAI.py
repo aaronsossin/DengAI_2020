@@ -4,19 +4,12 @@
 
 from __future__ import print_function
 from __future__ import division
-from RNN import r_neural_net
 import torch
-from feed_forward import feed_forward
-from neural_net_1 import neural_net_1
 
 import pandas as pd
 import numpy as np
 
 from matplotlib import pyplot as plt
-import seaborn as sns
-
-from sklearn.model_selection import train_test_split
-import statsmodels.api as sm
 
 # just for the sake of this blog post!
 from warnings import filterwarnings
@@ -254,8 +247,8 @@ def cross_val(m, criterion, optimizer, X, y, lr, hu, k=8):
         scores.append(score)
     return sum(scores) / len(scores)
 
-from SequenceNet import Sequence
-from TwoLayerNet import TwoLayerNet
+
+from unused_models.TwoLayerNet import TwoLayerNet
 from FFN import Feedforward
 # ---------------Initializing Model-------------
 #model = feed_forward(X_sj.shape[1], 2)
@@ -291,7 +284,7 @@ for c in range(0,5):
 print((scores, hu, lr))
 """
 
-from keras.layers import Dense, Activation
+from keras.layers import Dense
 from keras.models import Sequential
 # Initialising the ANN
 modelSJ = Sequential()
