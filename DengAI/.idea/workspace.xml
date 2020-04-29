@@ -2,11 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="96a60eef-ca63-40b4-956b-bdccc332627d" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/EpidemicModels.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Gridsearch.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DeepModels.py" beforeDir="false" afterPath="$PROJECT_DIR$/DeepModels.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DengAI3.py" beforeDir="false" afterPath="$PROJECT_DIR$/DengAI3.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Epidemic.py" beforeDir="false" afterPath="$PROJECT_DIR$/Epidemic.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scores_ML_models.rtf" beforeDir="false" afterPath="$PROJECT_DIR$/scores_ML_models.rtf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/submission.csv" beforeDir="false" afterPath="$PROJECT_DIR$/submission.csv" afterDir="false" />
     </list>
@@ -112,6 +111,7 @@
       <workItem from="1587487867050" duration="531000" />
       <workItem from="1587501154928" duration="18078000" />
       <workItem from="1588031392354" duration="16127000" />
+      <workItem from="1588131109901" duration="5173000" />
     </task>
     <servers />
   </component>

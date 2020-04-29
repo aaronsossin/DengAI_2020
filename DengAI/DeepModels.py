@@ -36,6 +36,52 @@ class DeepModels:
         model.compile(optimizer='Adam', loss='mean_absolute_error')
         return model
 
+    def returnSequential15(self, idim = 20):
+        model = Sequential()
+        model.add(Dense(140, input_dim=idim, activation='relu'))
+        model.add(Dense(130, activation='relu'))
+        model.add(Dense(120, activation='relu'))
+        model.add(Dense(110, activation='relu'))
+        model.add(Dense(100, activation='relu'))
+        model.add(Dense(90, activation='relu'))
+        model.add(Dense(80, activation='relu'))
+        model.add(Dense(70, activation='relu'))
+        model.add(Dense(60, activation='relu'))
+        model.add(Dense(50, activation='relu'))
+        model.add(Dense(40, activation='relu'))
+        model.add(Dense(30, activation='relu'))
+        model.add(Dense(20, activation='relu'))
+        model.add(Dense(10, activation='relu'))
+        model.add(Dense(1, activation='linear'))
+        model.compile(optimizer='Adam', loss='mean_absolute_error')
+        return model
+
+    def returnSequential21(self, idim = 20):
+        model = Sequential()
+        model.add(Dense(200, input_dim=idim, activation='relu'))
+        model.add(Dense(190, activation='relu'))
+        model.add(Dense(180, activation='relu'))
+        model.add(Dense(170, activation='relu'))
+        model.add(Dense(160, activation='relu'))
+        model.add(Dense(150, activation='relu'))
+        model.add(Dense(140, activation='relu'))
+        model.add(Dense(130, activation='relu'))
+        model.add(Dense(120, activation='relu'))
+        model.add(Dense(110, activation='relu'))
+        model.add(Dense(100, activation='relu'))
+        model.add(Dense(90, activation='relu'))
+        model.add(Dense(80, activation='relu'))
+        model.add(Dense(70, activation='relu'))
+        model.add(Dense(60, activation='relu'))
+        model.add(Dense(50, activation='relu'))
+        model.add(Dense(40, activation='relu'))
+        model.add(Dense(30, activation='relu'))
+        model.add(Dense(20, activation='relu'))
+        model.add(Dense(10, activation='relu'))
+        model.add(Dense(1, activation='linear'))
+        model.compile(optimizer='Adam', loss='mean_absolute_error')
+        return model
+
     def RNN(self, idim = 20):
         model = Sequential()
         model.add(SimpleRNN(2, input_dim=idim))
@@ -48,6 +94,15 @@ class DeepModels:
         model.add(SimpleRNN(2, input_dim=idim))
         model.add(Dense(40, activation='relu'))
         model.add(Dense(20, activation='relu'))
+        model.add(Dense(1, activation='linear'))
+        model.compile(optimizer='Adam', loss='mean_absolute_error')
+        return model
+
+    def multi_RNN2(self, idim = 20):
+        model = Sequential()
+        model.add(SimpleRNN(21, input_dim=idim))
+        model.add(Dense(20, activation='relu'))
+        model.add(Dense(10, activation='relu'))
         model.add(Dense(1, activation='linear'))
         model.compile(optimizer='Adam', loss='mean_absolute_error')
         return model
@@ -116,6 +171,15 @@ class DeepModels:
         elif m == 8:
             self.model = self.returnSequential9(idim)
             self.type = 2
+        elif m == 9:
+            self.model = self.returnSequential15(idim)
+            self.type = 2
+        elif m == 10:
+            self.model = self.returnSequential21(idim)
+            self.type = 2
+        elif m == 11:
+            self.model = self.multi_RNN2(idim)
+            self.type = 1
 
     def returnModel(self):
         return self.model
