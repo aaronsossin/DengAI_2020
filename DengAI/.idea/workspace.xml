@@ -2,12 +2,29 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="96a60eef-ca63-40b4-956b-bdccc332627d" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Gridsearch.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DeepModels.py" beforeDir="false" afterPath="$PROJECT_DIR$/DeepModels.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DengAI3.py" beforeDir="false" afterPath="$PROJECT_DIR$/DengAI3.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scores_ML_models.rtf" beforeDir="false" afterPath="$PROJECT_DIR$/scores_ML_models.rtf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DengAI3.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Epidemic.py" beforeDir="false" afterPath="$PROJECT_DIR$/Epidemic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EpidemicModels.py" beforeDir="false" afterPath="$PROJECT_DIR$/EpidemicModels.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gridsearch.py" beforeDir="false" afterPath="$PROJECT_DIR$/Gridsearch.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LinearGAM.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Preprocess.py" beforeDir="false" afterPath="$PROJECT_DIR$/Preprocess.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scores_ML_models.rtf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sk_models.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/submission.csv" beforeDir="false" afterPath="$PROJECT_DIR$/submission.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/unused_models/Bottle.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/unused_models/FFN.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/unused_models/RNN.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/unused_models/SequenceNet.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/unused_models/TwoLayerNet.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/unused_models/dengAI.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/unused_models/dengAI2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/unused_models/feed_forward.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/unused_models/neural_net_1.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bestPREDICTON_sequential4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sequential4_noepidemic.png" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -111,7 +128,41 @@
       <workItem from="1587487867050" duration="531000" />
       <workItem from="1587501154928" duration="18078000" />
       <workItem from="1588031392354" duration="16127000" />
-      <workItem from="1588131109901" duration="5173000" />
+      <workItem from="1588131109901" duration="17265000" />
+      <workItem from="1588352214825" duration="2314000" />
+      <workItem from="1588439788834" duration="9747000" />
+      <workItem from="1588512991504" duration="4623000" />
+      <workItem from="1588536242411" duration="379000" />
+      <workItem from="1588537296438" duration="386000" />
+      <workItem from="1588537960688" duration="903000" />
+      <workItem from="1588539062292" duration="140000" />
+      <workItem from="1588539566670" duration="74000" />
+      <workItem from="1588539781090" duration="217000" />
+      <workItem from="1588540166221" duration="231000" />
+      <workItem from="1588540654789" duration="308000" />
+      <workItem from="1588541186027" duration="181000" />
+      <workItem from="1588541537765" duration="175000" />
+      <workItem from="1588542073554" duration="136000" />
+      <workItem from="1588542758246" duration="988000" />
+      <workItem from="1588545006319" duration="303000" />
+      <workItem from="1588545330614" duration="148000" />
+      <workItem from="1588545495263" duration="92000" />
+      <workItem from="1588545757903" duration="171000" />
+      <workItem from="1588545946362" duration="152000" />
+      <workItem from="1588546346565" duration="187000" />
+      <workItem from="1588546602314" duration="89000" />
+      <workItem from="1588546708479" duration="53000" />
+      <workItem from="1588550499761" duration="157000" />
+      <workItem from="1588550671944" duration="82000" />
+      <workItem from="1588550768609" duration="65000" />
+      <workItem from="1588550872351" duration="66000" />
+      <workItem from="1588551030615" duration="223000" />
+      <workItem from="1588551270631" duration="236000" />
+      <workItem from="1588551953306" duration="977000" />
+      <workItem from="1588567033236" duration="1962000" />
+      <workItem from="1588569893764" duration="297000" />
+      <workItem from="1588570207303" duration="4551000" />
+      <workItem from="1588620212345" duration="1085000" />
     </task>
     <servers />
   </component>

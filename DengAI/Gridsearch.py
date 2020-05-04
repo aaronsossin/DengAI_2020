@@ -1,6 +1,6 @@
 from EpidemicModels import EpidemicModels
 from DeepModels import DeepModels
-def returnOptimizedModel_epidemic(X, y, bs=0, ep=0):
+def returnOptimizedModel_epidemic(e, X, y, idim=20, bs=0, ep=0):
     # SJ Optimization
     scores = []
     aa = []
@@ -25,7 +25,7 @@ def returnOptimizedModel_epidemic(X, y, bs=0, ep=0):
     # model.fit(X, y)
     return model, max_score, batch, epochs
 
-def returnOptimizedModel(X, y, idim=20):
+def returnOptimizedModel(m, X, y, idim=20):
     scores = []
     aa = []
     bb = []

@@ -1,3 +1,10 @@
-Predicting Dengue Fever in Puerto Rico and Peru as defined by DrivenData's competition. 
+Predicting Dengue Fever in San Juan, Puerto Rico and Iquitos, Peru.  
 
-DengAI2.py is the main file that should be run and contains the neural nets. A specific neural net needs to be chosen and changed within the code for now.  
+To run regression models: 
+	- 
+
+To run GAM and DL models:
+	- run main_dl_and_gam.py
+	- select desired model and whether to include binary outbreak classifier.
+
+

@@ -2,7 +2,6 @@ from keras.layers import Dense, Activation
 from keras.models import Sequential
 from keras.layers import SimpleRNN
 from keras.layers import LSTM
-from sk_models import sk_models
 from sklearn.model_selection import KFold
 import numpy as np
 from pygam import LogisticGAM, LinearGAM
@@ -64,9 +63,9 @@ class EpidemicModels:
 
     def lstm(self):
         model = Sequential()
-        model.add(LSTM(4, input_dim=20))
+        model.add(LSTM(10, input_dim=20))
         model.add(Dense(1, activation='linear'))
-        model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+        model.compile(loss='mean_absolute_error', optimizer='adam')
         return model
 
     def multi_lstm(self):
@@ -78,23 +77,21 @@ class EpidemicModels:
         return model
 
     # Sequential 4 layer neural network
-    def returnSequential4(self):
+    def returnSequential2(self):
         model = Sequential()
-
-        model.add(Dense(32, activation='relu', input_dim=20))
-        model.add(Dense(units=32, activation='relu'))
-        model.add(Dense(units=32, activation='relu'))
+        model.add(Dense(14, activation='relu', input_dim=20))
+        model.add(Dense(units=7, activation='relu'))
         model.add(Dense(units=1, activation='sigmoid'))
         model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
         return model
 
-    def __init__(self, m):
+    def __init__(self, m=1):
         if m == 0:
             self.model = self.baseline()
             self.type = 0
         elif m == 1:
-            self.model = self.returnSequential4()
+            self.model = self.returnSequential2()
             self.type = 2
         elif m == 2:
             self.model = self.returnSequential6()

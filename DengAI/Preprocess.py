@@ -1,8 +1,7 @@
 from warnings import filterwarnings
 import pandas as pd
 from sklearn.preprocessing import scale
-
-
+import numpy as np
 
 def preprocess_data_all_features(data_path, labels_path=None):
         # load data and set index to city, year, weekofyear
@@ -75,9 +74,6 @@ def extract():
         X_iq = iq_train.iloc[:, :-1]
         y_iq = iq_train.iloc[:, -1]
 
-        X_sj = scaler(X_sj)
-        X_iq = scaler(X_iq)
-
         return X_sj, X_iq, y_sj, y_iq
 
 def scaler(X):
@@ -85,6 +81,20 @@ def scaler(X):
 
 def scalerGAM(X):
         return (X-min(X))/(max(X)-min(X))
+
+def combineWithTest():
+    sj_test, iq_test = preprocess_data_all_features('dengue_features_test.csv')
+    X_sj, X_iq, y_sj, y_iq = extract()
+    X_sj2 = np.vstack((X_sj, sj_test))
+    X_iq2 = np.vstack((X_iq, iq_test))
+    X_sj2 = scaler(X_sj2)
+    X_iq2 = scaler(X_iq2)
+    X_sj_after = X_sj2[:X_sj.shape[0]]
+    X_iq_after = X_iq2[:X_iq.shape[0]]
+    X_sjtest_after = X_sj2[X_sj.shape[0]:]
+    X_iqtest_after = X_iq2[X_iq.shape[0]:]
+    return X_sj_after, X_iq_after, y_sj, y_iq, X_sjtest_after, X_iqtest_after
+
 
 
 

@@ -4,10 +4,10 @@ import torch
 
 
 
-def convertToEpidemic(y):
+def convertToEpidemic(y, st=1):
         m = mean(y)
         std = stdev(y)
-        threshold = m + 1.0 * std
+        threshold = m + st * std
         newY = [1 if x > threshold else 0 for x in y]
         return np.array(newY)
 
